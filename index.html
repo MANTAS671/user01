@@ -3,113 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Кот, который правит миром</title>
+  <title>Blackjack 21</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #232526, #414345);
+      color: #fff;
       text-align: center;
-      color: #333;
-      overflow-x: hidden;
-    }
-
-    header {
       padding: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      background: #ff7e5f;
-      color: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
-
-    .hero {
-      padding: 50px 20px;
-    }
-
-    .hero img {
-      width: 200px;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-
     h1 {
-      font-size: 3rem;
-      margin: 20px 0;
+      margin-bottom: 10px;
     }
-
-    p {
-      font-size: 1.3rem;
-      margin: 10px auto 30px;
+    .game-area {
+      margin: 20px auto;
       max-width: 500px;
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 10px;
-      background: #ff7e5f;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
-    }
-
-    button:hover {
-      transform: scale(1.1);
-      background: #ff9a76;
-    }
-
-    .quotes {
-      margin: 50px 0;
-    }
-
-    .quote {
-      background: white;
-      display: inline-block;
-      margin: 10px;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      max-width: 300px;
-      font-style: italic;
-      animation: fadeIn 1s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(30px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    footer {
-      margin-top: 50px;
+      background: rgba(0,0,0,0.5);
       padding: 20px;
-      background: #ff7e5f;
-      color: white;
-      font-size: 1rem;
+      border-radius: 15px;
+    }
+    .hand {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .card {
+      width: 60px;
+      height: 90px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+    .card.new {
+      transform: scale(1.2);
+    }
+    .buttons button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #ff9800;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .buttons button:hover {
+      background: #e68900;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <header>Кот-Император Вселенной</header>
-  <div class="hero">
-    <img src="https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.png" alt="Кот в короне">
-    <h1>Я — ваш новый повелитель!</h1>
-    <p>С этого момента вы обязаны кормить меня сосисками и чесать пузико три раза в день.</p>
-    <button onclick="alert('Мяу! Теперь ты мой подданный!')">Сдаться коту</button>
+
+  <h1>Blackjack — 21</h1>
+  <div class="game-area">
+    <h2>Ваши карты (<span id="player-score">0</span>)</h2>
+    <div class="hand" id="player-hand"></div>
+
+    <h2>Карты дилера (<span id="dealer-score">0</span>)</h2>
+    <div class="hand" id="dealer-hand"></div>
+
+    <div class="buttons">
+      <button onclick="hit()">Взять карту</button>
+      <button onclick="stand()">Хватит</button>
+      <button onclick="restart()">Начать заново</button>
+    </div>
+
+    <div class="result" id="result"></div>
   </div>
 
-  <div class="quotes">
-    <div class="quote">"Я сплю 16 часов в день, а правлю оставшиеся 8."</div>
-    <div class="quote">"Все налоги уплачиваются в виде рыбы и молока."</div>
-    <div class="quote">"Ваша диванная армия уже служит мне."</div>
-  </div>
+<script>
+const suits = ['♥','♦','♣','♠'];
+const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+let deck, playerHand, dealerHand;
+let playerScore = 0, dealerScore = 0;
+let gameOver = false;
 
-  <footer>© 2025 Кот-Император. Все права мяуканы.</footer>
+function createDeck() {
+  let newDeck = [];
+  for (let suit of suits) {
+    for (let value of values) {
+      newDeck.push({ value, suit });
+    }
+  }
+  return newDeck.sort(() => Math.random() - 0.5);
+}
+
+function cardValue(card) {
+  if (['J','Q','K'].includes(card.value)) return 10;
+  if (card.value === 'A') return 11;
+  return parseInt(card.value);
+}
+
+function calculateScore(hand) {
+  let score = 0;
+  let aces = 0;
+  for (let card of hand) {
+    score += cardValue(card);
+    if (card.value === 'A') aces++;
+  }
+  while (score > 21 && aces > 0) {
+    score -= 10;
+    aces--;
+  }
+  return score;
+}
+
+function renderHand(hand, elementId) {
+  const container = document.getElementById(elementId);
+  container.innerHTML = '';
+  for (let card of hand) {
+    let div = document.createElement('div');
+    div.className = 'card new';
+    div.textContent = card.value + card.suit;
+    container.appendChild(div);
+    setTimeout(() => div.classList.remove('new'), 200);
+  }
+}
+
+function updateScores() {
+  playerScore = calculateScore(playerHand);
+  dealerScore = calculateScore(dealerHand);
+  document.getElementById('player-score').textContent = playerScore;
+  document.getElementById('dealer-score').textContent = dealerScore;
+}
+
+function checkEndGame() {
+  if (playerScore > 21) {
+    document.getElementById('result').textContent = 'Вы перебрали! Проигрыш.';
+    gameOver = true;
+  } else if (dealerScore > 21) {
+    document.getElementById('result').textContent = 'Дилер перебрал! Вы выиграли!';
+    gameOver = true;
+  } else if (gameOver) {
+    if (playerScore > dealerScore) {
+      document.getElementById('result').textContent = 'Вы выиграли!';
+    } else if (playerScore < dealerScore) {
+      document.getElementById('result').textContent = 'Вы проиграли!';
+    } else {
+      document.getElementById('result').textContent = 'Ничья!';
+    }
+  }
+}
+
+function hit() {
+  if (gameOver) return;
+  playerHand.push(deck.pop());
+  renderHand(playerHand, 'player-hand');
+  updateScores();
+  checkEndGame();
+}
+
+function stand() {
+  if (gameOver) return;
+  while (dealerScore < 17) {
+    dealerHand.push(deck.pop());
+    dealerScore = calculateScore(dealerHand);
+    renderHand(dealerHand, 'dealer-hand');
+    updateScores();
+  }
+  gameOver = true;
+  checkEndGame();
+}
+
+function restart() {
+  deck = createDeck();
+  playerHand = [deck.pop(), deck.pop()];
+  dealerHand = [deck.pop()];
+  gameOver = false;
+  renderHand(playerHand, 'player-hand');
+  renderHand(dealerHand, 'dealer-hand');
+  updateScores();
+  document.getElementById('result').textContent = '';
+}
+
+restart();
+</script>
+
 </body>
 </html>
