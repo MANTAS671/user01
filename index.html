@@ -100,18 +100,6 @@
             background: transparent;
             position: relative;
         }
-        /* Статус-бар */
-        .status-bar {
-            height: 44px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 24px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: transparent;
-        }
         /* Хедер */
         .header {
             background: rgba(21, 21, 31, 0.8);
@@ -624,136 +612,6 @@
                 opacity: 0;
             }
         }
-        /* История */
-        .history-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(21, 21, 31, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 16px;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 200;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-        .history-panel.active {
-            transform: translateY(0);
-        }
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .history-title {
-            font-size: 16px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .history-close {
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: var(--text-secondary);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .history-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-        .history-item:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-        .history-result {
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .history-result.win {
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--neon-green);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-        }
-        .history-result.lose {
-            background: rgba(255, 51, 102, 0.2);
-            color: var(--danger);
-            box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
-        }
-        .history-result.draw {
-            background: rgba(255, 170, 0, 0.2);
-            color: var(--warning);
-            box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
-        }
-        .history-details {
-            text-align: right;
-        }
-        .history-bet {
-            color: var(--text-dim);
-            font-size: 11px;
-        }
-        .history-balance {
-            font-weight: 600;
-            color: var(--neon-blue);
-            font-variant-numeric: tabular-nums;
-        }
-        /* Кнопка истории */
-        .history-toggle {
-            position: fixed;
-            bottom: 70px;
-            right: 16px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            color: var(--text-primary);
-            border: none;
-            font-size: 20px;
-            box-shadow: 
-                0 8px 32px rgba(0, 212, 255, 0.4),
-                0 0 20px var(--shadow-glow);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 150;
-        }
-        .history-toggle:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 
-                0 12px 40px rgba(0, 212, 255, 0.6),
-                0 0 30px var(--shadow-glow);
-        }
-        .history-toggle:active {
-            transform: translateY(-2px) scale(0.98);
-        }
         /* Подсказка */
         .tooltip {
             position: fixed;
@@ -944,14 +802,6 @@
     <div class="particles" id="particles"></div>
     
     <div class="app-container">
-        <!-- Статус-бар -->
-        <div class="status-bar">
-            <span>9:41</span>
-            <div style="display: flex; gap: 6px;">
-                <span>📶</span>
-                <span>🔋</span>
-            </div>
-        </div>
         <!-- Хедер -->
         <header class="header">
             <h1 class="logo">BLACKJACK</h1>
@@ -1028,18 +878,8 @@
             </section>
         </main>
     </div>
-    <!-- Кнопка истории -->
-    <button class="history-toggle" onclick="game.toggleHistory()">📊</button>
     <!-- Кнопка настроек -->
     <button class="settings-toggle-btn" onclick="game.toggleSettings()">⚙️</button>
-    <!-- История -->
-    <div class="history-panel" id="historyPanel">
-        <div class="history-header">
-            <h3 class="history-title">История игр</h3>
-            <button class="history-close" onclick="game.toggleHistory()">×</button>
-        </div>
-        <div class="history-list" id="historyList"></div>
-    </div>
     <!-- Настройки -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-content">
@@ -1073,7 +913,6 @@
                 this.gameActive = false;
                 this.autoPlay = false;
                 this.hintsEnabled = false;
-                this.gameHistory = [];
                 this.gameNumber = 0;
                 this.stats = {
                     played: 0,
@@ -1143,8 +982,6 @@
                     autoBtn: document.getElementById('autoBtn'),
                     hintBtn: document.getElementById('hintBtn'),
                     chicken: document.getElementById('chicken'),
-                    historyPanel: document.getElementById('historyPanel'),
-                    historyList: document.getElementById('historyList'),
                     tooltip: document.getElementById('tooltip'),
                     settingsModal: document.getElementById('settingsModal'),
                     gamesPlayed: document.getElementById('gamesPlayed'),
@@ -1196,12 +1033,10 @@
                 if (savedData) {
                     const data = JSON.parse(savedData);
                     this.balance = data.balance || 50000;
-                    this.gameHistory = data.gameHistory || [];
                     this.gameNumber = data.gameNumber || 0;
                     this.stats = data.stats || { played: 0, won: 0, lost: 0, draw: 0, blackjack: 0 };
                     this.settings = { ...this.settings, ...data.settings };
                     this.updateSettingsUI();
-                    this.updateHistory();
                 }
             }
             
@@ -1209,7 +1044,6 @@
             saveGameData() {
                 const data = {
                     balance: this.balance,
-                    gameHistory: this.gameHistory,
                     gameNumber: this.gameNumber,
                     stats: this.stats,
                     settings: this.settings
@@ -1555,24 +1389,8 @@
                 
                 this.balance += balanceChange;
                 
-                // Добавление в историю
-                this.gameHistory.unshift({
-                    number: this.gameNumber,
-                    result: result,
-                    bet: this.currentBet,
-                    balance: this.balance,
-                    playerScore: playerScore,
-                    dealerScore: dealerScore
-                });
-                
-                // Ограничение истории
-                if (this.gameHistory.length > 20) {
-                    this.gameHistory = this.gameHistory.slice(0, 20);
-                }
-                
                 this.updateUI();
                 this.updateStats();
-                this.updateHistory();
                 this.saveGameData();
                 
                 // Показать результат
@@ -1713,49 +1531,6 @@
                     ? Math.round((this.stats.won / this.stats.played) * 100) 
                     : 0;
                 this.elements.winRate.textContent = winRate + '%';
-            }
-            
-            // Переключение истории
-            toggleHistory() {
-                this.elements.historyPanel.classList.toggle('active');
-            }
-            
-            // Обновление истории
-            updateHistory() {
-                this.elements.historyList.innerHTML = '';
-                
-                this.gameHistory.slice(0, 10).forEach((game) => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    
-                    let resultClass = game.result;
-                    let resultText = '';
-                    
-                    switch (game.result) {
-                        case 'win':
-                            resultText = 'Победа';
-                            break;
-                        case 'lose':
-                            resultText = 'Проигрыш';
-                            break;
-                        case 'draw':
-                            resultText = 'Ничья';
-                            break;
-                        case 'blackjack':
-                            resultText = 'Blackjack';
-                            break;
-                    }
-                    
-                    item.innerHTML = `
-                        <div class="history-result ${resultClass}">${resultText}</div>
-                        <div class="history-details">
-                            <div class="history-bet">${game.bet.toLocaleString()} MDL</div>
-                            <div class="history-balance">${game.balance.toLocaleString()} MDL</div>
-                        </div>
-                    `;
-                    
-                    this.elements.historyList.appendChild(item);
-                });
             }
             
             // Переключение автоигры
