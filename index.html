@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
-    <title>21</title>
+    <title>Blackjack 21 - Premium Dark Edition</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,191 +16,375 @@
         }
 
         :root {
-            --primary: #000000;
-            --secondary: #ffffff;
-            --accent: #FFD700;
-            --success: #00C853;
-            --danger: #FF1744;
-            --bg: #FFFFFF;
-            --text: #000000;
-            --text-light: #666666;
-            --border: #E5E5E5;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #15151f;
+            --bg-card: #1a1a2e;
+            --bg-hover: #252538;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --text-dim: #707090;
+            --accent: #00d4ff;
+            --accent-secondary: #ff006e;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff3366;
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff006e;
+            --neon-green: #00ff88;
+            --neon-purple: #aa00ff;
+            --shadow-glow: rgba(0, 212, 255, 0.3);
+            --shadow-card: rgba(0, 0, 0, 0.5);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
             position: relative;
         }
 
+        /* Анимированный фон с частицами */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(170, 0, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0a0f 0%, #15151f 100%);
+            z-index: -2;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat 20s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(10px) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) translateX(-10px) scale(1);
+            }
+            100% {
+                transform: translateY(0) translateX(0) scale(0);
+                opacity: 0;
+            }
+        }
+
         /* Основной контейнер */
-        .app {
+        .app-container {
             height: 100vh;
             display: flex;
             flex-direction: column;
             max-width: 100%;
             margin: 0 auto;
-            background: var(--bg);
+            background: transparent;
+            position: relative;
         }
 
-        /* Хедер - максимально компактный */
-        .header {
-            background: var(--bg);
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+        /* Статус-бар */
+        .status-bar {
+            height: 44px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        /* Хедер */
+        .header {
+            background: rgba(21, 21, 31, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 900;
             letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--shadow-glow);
+            animation: logoGlow 3s ease-in-out infinite alternate;
         }
 
-        .balance {
-            font-size: 16px;
-            font-weight: 600;
+        @keyframes logoGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .balance-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .balance-amount {
-            color: var(--accent);
+            font-size: 20px;
             font-weight: 700;
+            color: var(--neon-green);
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
-        /* Игровая область - без лишних отступов */
+        /* Игровая область */
         .game-area {
             flex: 1;
+            padding: 16px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            padding: 8px;
-            overflow-y: auto;
+            gap: 12px;
         }
 
-        /* Секции - минимальные отступы */
-        .section {
-            background: var(--bg);
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        /* Карточки с неоновыми эффектами */
+        .game-card {
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 
+                0 4px 20px var(--shadow-card),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 30px var(--shadow-card),
+                0 0 20px var(--shadow-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         /* Крупье */
-        .dealer {
+        .dealer-section {
+            text-align: center;
+        }
+
+        .dealer-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chicken-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
         .chicken {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), #FFA000);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--neon-green), var(--warning));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-            transition: all 0.3s ease;
+            font-size: 32px;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 136, 0.5),
+                0 0 60px rgba(255, 170, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: chickenFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes chickenFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
         }
 
         .chicken.happy {
-            animation: pulse 0.5s ease;
+            animation: chickenHappy 0.6s ease-out;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        @keyframes chickenHappy {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.3) rotate(-15deg); }
+            50% { transform: scale(1.4) rotate(15deg); }
+            75% { transform: scale(1.3) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .chicken.sad {
-            animation: shake 0.4s ease;
+            animation: chickenSad 0.6s ease-out;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
+        @keyframes chickenSad {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(0.8) rotate(-10deg); }
+            75% { transform: scale(0.8) rotate(10deg); }
         }
 
         .score {
             font-size: 14px;
-            color: var(--text-light);
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .score-value {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 700;
-            color: var(--text);
-            margin-left: 4px;
+            color: var(--neon-blue);
+            margin-left: 8px;
+            text-shadow: 0 0 10px var(--shadow-glow);
         }
 
-        /* Карты - очень компактные */
-        .cards {
+        /* Игровые карты */
+        .cards-container {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             justify-content: center;
-            min-height: 50px;
+            min-height: 70px;
             flex-wrap: wrap;
+            margin-top: 12px;
         }
 
-        .card {
-            width: 35px;
-            height: 50px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
+        .playing-card {
+            width: 45px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 700;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            animation: slideIn 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(0, 212, 255, 0.2);
+            animation: cardDeal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes slideIn {
-            from {
+        @keyframes cardDeal {
+            0% {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-100px) rotate(180deg) scale(0.5);
             }
-            to {
+            50% {
+                opacity: 0.8;
+                transform: translateY(20px) rotate(90deg) scale(1.1);
+            }
+            100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) rotate(0deg) scale(1);
             }
         }
 
-        .card.red {
+        .playing-card.red {
             color: var(--danger);
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
         }
 
-        .card.hidden {
-            background: linear-gradient(135deg, var(--primary), var(--text-light));
+        .playing-card.hidden {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
             color: transparent;
+            animation: cardShuffle 0.6s ease-in-out infinite;
         }
 
-        .card-suit {
-            font-size: 10px;
-            margin-top: 2px;
+        @keyframes cardShuffle {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(2deg); }
         }
 
-        /* Управление - максимально компактное */
+        .playing-card-suit {
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        /* Управление */
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .bet-row {
+        .bet-section {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .bet-controls {
             display: flex;
             gap: 8px;
             align-items: center;
@@ -206,178 +392,332 @@
 
         .bet-input {
             flex: 1;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             text-align: center;
-            background: var(--bg);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-variant-numeric: tabular-nums;
         }
 
         .bet-input:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--neon-blue);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 20px var(--shadow-glow);
         }
 
-        .bet-btn {
-            width: 36px;
-            height: 36px;
+        .bet-button {
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: 6px;
-            background: var(--accent);
-            color: var(--primary);
-            font-size: 16px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: var(--text-primary);
+            font-size: 18px;
             font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
         }
 
-        .action-row {
+        .bet-button:active {
+            transform: scale(0.95);
+        }
+
+        .bet-button:hover {
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .action-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .action-btn {
-            padding: 12px;
+        .action-button {
+            padding: 14px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .action-btn:disabled {
-            opacity: 0.5;
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .action-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .action-button:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        .start-btn {
-            background: var(--primary);
-            color: var(--secondary);
+        .start-button {
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+            color: var(--bg-primary);
             grid-column: 1 / -1;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
         }
 
-        .hit-btn {
-            background: var(--success);
-            color: white;
+        .start-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.6);
         }
 
-        .stand-btn {
-            background: var(--accent);
-            color: var(--primary);
+        .hit-button {
+            background: linear-gradient(135deg, var(--success), var(--neon-green));
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
         }
 
-        .toggle-row {
+        .hit-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.6);
+        }
+
+        .stand-button {
+            background: linear-gradient(135deg, var(--warning), var(--danger));
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.4);
+        }
+
+        .stand-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(255, 170, 0, 0.6);
+        }
+
+        .double-button {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(170, 0, 255, 0.4);
+        }
+
+        .double-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(170, 0, 255, 0.6);
+        }
+
+        .toggle-buttons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .toggle-btn {
+        .toggle-button {
             flex: 1;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--bg);
-            font-size: 12px;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .toggle-btn.active {
-            background: var(--primary);
-            color: var(--secondary);
-            border-color: var(--primary);
+        .toggle-button.active {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: var(--text-primary);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
 
-        /* Статистика - компактная */
+        /* Статистика */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 10px;
         }
 
-        .stat {
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px;
             text-align: center;
-            padding: 8px;
-            background: #F5F5F5;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
         }
 
         .stat-label {
-            font-size: 10px;
-            color: var(--text-light);
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--shadow-glow);
         }
 
         /* Речевой пузырь */
-        .speech {
+        .speech-bubble {
             position: absolute;
-            top: -30px;
+            top: -35px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--primary);
-            color: var(--secondary);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
             white-space: nowrap;
+            box-shadow: 
+                0 4px 20px var(--shadow-card),
+                0 0 20px var(--shadow-glow);
+            border: 1px solid rgba(0, 212, 255, 0.3);
             opacity: 0;
-            animation: speech 1.5s ease;
+            animation: speechFloat 2s ease;
         }
 
-        @keyframes speech {
-            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(5px); }
-            20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        @keyframes speechFloat {
+            0% { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(10px) scale(0.8); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(0) scale(1); 
+            }
+            80% { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(-5px) scale(1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(-15px) scale(0.9); 
+            }
         }
 
         /* Эффекты */
-        .win-effect {
+        .victory-effect {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--success);
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             opacity: 0;
-            animation: win 1s ease;
+            animation: victoryPulse 2s ease-out;
+            z-index: 1000;
+            pointer-events: none;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        @keyframes victoryPulse {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+
+        .defeat-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(255, 51, 102, 0.3) 100%);
+            opacity: 0;
+            animation: defeatFlash 0.8s ease-out;
+            z-index: 999;
             pointer-events: none;
         }
 
-        @keyframes win {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        @keyframes defeatFlash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
         }
 
-        /* История - снизу */
-        .history {
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* История */
+        .history-panel {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--bg);
-            border-top: 1px solid var(--border);
-            padding: 12px;
+            background: rgba(21, 21, 31, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
             transform: translateY(100%);
-            transition: transform 0.3s ease;
-            max-height: 40vh;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+            max-height: 60vh;
             overflow-y: auto;
         }
 
-        .history.show {
+        .history-panel.active {
             transform: translateY(0);
         }
 
@@ -385,96 +725,353 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
 
         .history-title {
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .history-close {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border: none;
-            background: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-secondary);
             font-size: 18px;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
         }
 
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
         }
 
         .history-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px;
-            background: #F5F5F5;
-            border-radius: 6px;
-            font-size: 12px;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
         }
 
         .history-result {
-            font-weight: 600;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .history-result.win { color: var(--success); }
-        .history-result.lose { color: var(--danger); }
-        .history-result.draw { color: var(--accent); }
+        .history-result.win {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .history-result.lose {
+            background: rgba(255, 51, 102, 0.2);
+            color: var(--danger);
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+        }
+
+        .history-result.draw {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--warning);
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+        }
+
+        .history-details {
+            text-align: right;
+        }
+
+        .history-bet {
+            color: var(--text-dim);
+            font-size: 12px;
+        }
+
+        .history-balance {
+            font-weight: 600;
+            color: var(--neon-blue);
+            font-variant-numeric: tabular-nums;
+        }
 
         /* Кнопка истории */
-        .history-btn {
+        .history-toggle {
             position: fixed;
-            bottom: 70px;
-            right: 16px;
-            width: 44px;
-            height: 44px;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: var(--primary);
-            color: var(--secondary);
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: var(--text-primary);
             border: none;
-            font-size: 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-size: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 212, 255, 0.4),
+                0 0 20px var(--shadow-glow);
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 150;
+        }
+
+        .history-toggle:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 40px rgba(0, 212, 255, 0.6),
+                0 0 30px var(--shadow-glow);
+        }
+
+        .history-toggle:active {
+            transform: translateY(-2px) scale(0.98);
         }
 
         /* Подсказка */
         .tooltip {
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--primary);
-            color: var(--secondary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
             font-weight: 600;
+            box-shadow: 
+                0 8px 32px var(--shadow-card),
+                0 0 20px var(--shadow-glow);
+            border: 1px solid rgba(0, 212, 255, 0.3);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
         }
 
         .tooltip.show {
             opacity: 1;
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        /* Для iPhone 13 - учет safe area */
+        /* Модальное окно настроек */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .settings-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-content {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 
+                0 20px 60px var(--shadow-card),
+                0 0 40px var(--shadow-glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .settings-modal.active .settings-content {
+            transform: scale(1);
+        }
+
+        .settings-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .setting-toggle {
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .setting-toggle.active {
+            background: var(--neon-blue);
+        }
+
+        .setting-toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .setting-toggle.active::after {
+            transform: translateX(24px);
+        }
+
+        .settings-close {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: var(--text-primary);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .settings-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Кнопка настроек */
+        .settings-toggle-btn {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .settings-toggle-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        /* Адаптивность */
         @supports (padding: max(0px)) {
-            .app {
-                padding-bottom: max(8px, env(safe-area-inset-bottom));
+            .app-container {
+                padding-bottom: max(16px, env(safe-area-inset-bottom));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .balance-amount {
+                font-size: 18px;
+            }
+            
+            .game-area {
+                padding: 12px;
+                gap: 10px;
+            }
+            
+            .game-card {
+                padding: 12px;
+            }
+            
+            .playing-card {
+                width: 40px;
+                height: 58px;
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app">
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="app-container">
+        <!-- Статус-бар -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div style="display: flex; gap: 6px;">
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
         <!-- Хедер -->
         <header class="header">
-            <div class="logo">21</div>
-            <div class="balance">
+            <h1 class="logo">BLACKJACK</h1>
+            <div class="balance-container">
+                <span class="balance-label">Баланс</span>
                 <span class="balance-amount" id="balance">50,000 MDL</span>
             </div>
         </header>
@@ -482,63 +1079,67 @@
         <!-- Игровая область -->
         <main class="game-area">
             <!-- Крупье -->
-            <section class="section">
-                <div class="dealer">
-                    <div style="position: relative;">
+            <section class="game-card dealer-section">
+                <div class="dealer-header">
+                    <div class="chicken-wrapper">
                         <div class="chicken" id="chicken">🐔</div>
                     </div>
                     <div class="score">
                         Крупье<span class="score-value" id="dealerScore">0</span>
                     </div>
                 </div>
-                <div class="cards" id="dealerHand"></div>
+                <div class="cards-container" id="dealerHand"></div>
             </section>
 
             <!-- Игрок -->
-            <section class="section">
+            <section class="game-card player-section">
                 <div class="score">
                     Вы<span class="score-value" id="playerScore">0</span>
                 </div>
-                <div class="cards" id="playerHand"></div>
+                <div class="cards-container" id="playerHand"></div>
             </section>
 
             <!-- Статистика -->
-            <section class="section stats">
-                <div class="stat">
+            <section class="game-card stats">
+                <div class="stat-item">
                     <div class="stat-label">Игры</div>
                     <div class="stat-value" id="gamesPlayed">0</div>
                 </div>
-                <div class="stat">
+                <div class="stat-item">
                     <div class="stat-label">Победы</div>
                     <div class="stat-value" id="gamesWon">0</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">Win %</div>
+                <div class="stat-item">
+                    <div class="stat-label">Win Rate</div>
                     <div class="stat-value" id="winRate">0%</div>
                 </div>
             </section>
 
             <!-- Управление -->
-            <section class="section controls">
-                <div class="bet-row">
-                    <input type="number" class="bet-input" id="bet" min="100" step="100" value="100">
-                    <button class="bet-btn" onclick="game.adjustBet(-100)">−</button>
-                    <button class="bet-btn" onclick="game.adjustBet(100)">+</button>
-                    <button class="bet-btn" onclick="game.adjustBet(1000)">1K</button>
+            <section class="game-card controls">
+                <div class="bet-section">
+                    <div class="section-title">Ставка</div>
+                    <div class="bet-controls">
+                        <input type="number" class="bet-input" id="bet" min="100" step="100" value="100">
+                        <button class="bet-button" onclick="game.adjustBet(-100)">−</button>
+                        <button class="bet-button" onclick="game.adjustBet(100)">+</button>
+                        <button class="bet-button" onclick="game.adjustBet(1000)">1K</button>
+                    </div>
                 </div>
                 
-                <div class="action-row">
-                    <button class="action-btn start-btn" id="startBtn" onclick="game.startGame()">Начать</button>
-                    <button class="action-btn hit-btn" id="hitBtn" onclick="game.hit()" disabled>Взять</button>
-                    <button class="action-btn stand-btn" id="standBtn" onclick="game.stand()" disabled>Хватит</button>
+                <div class="action-buttons">
+                    <button class="action-button start-button" id="startBtn" onclick="game.startGame()">Начать игру</button>
+                    <button class="action-button hit-button" id="hitBtn" onclick="game.hit()" disabled>Взять</button>
+                    <button class="action-button stand-button" id="standBtn" onclick="game.stand()" disabled>Хватит</button>
+                    <button class="action-button double-button" id="doubleBtn" onclick="game.double()" disabled>Удвоить</button>
                 </div>
                 
-                <div class="toggle-row">
-                    <button class="toggle-btn" id="autoBtn" onclick="game.toggleAutoPlay()">
+                <div class="toggle-buttons">
+                    <button class="toggle-button" id="autoBtn" onclick="game.toggleAutoPlay()">
                         <span>🤖</span>
-                        <span>Авто</span>
+                        <span>Автоигра</span>
                     </button>
-                    <button class="toggle-btn" id="hintBtn" onclick="game.toggleHints()">
+                    <button class="toggle-button" id="hintBtn" onclick="game.toggleHints()">
                         <span>💡</span>
                         <span>Подсказки</span>
                     </button>
@@ -548,22 +1149,49 @@
     </div>
 
     <!-- Кнопка истории -->
-    <button class="history-btn" onclick="game.toggleHistory()">📊</button>
+    <button class="history-toggle" onclick="game.toggleHistory()">📊</button>
+
+    <!-- Кнопка настроек -->
+    <button class="settings-toggle-btn" onclick="game.toggleSettings()">⚙️</button>
 
     <!-- История -->
-    <div class="history" id="history">
+    <div class="history-panel" id="historyPanel">
         <div class="history-header">
-            <div class="history-title">История</div>
+            <h3 class="history-title">История игр</h3>
             <button class="history-close" onclick="game.toggleHistory()">×</button>
         </div>
         <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- Настройки -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h2 class="settings-title">Настройки</h2>
+            <div class="setting-item">
+                <span class="setting-label">Звуковые эффекты</span>
+                <div class="setting-toggle active" id="soundToggle" onclick="game.toggleSetting('sound')"></div>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Анимации</span>
+                <div class="setting-toggle active" id="animationToggle" onclick="game.toggleSetting('animation')"></div>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Вибрация</span>
+                <div class="setting-toggle" id="vibrationToggle" onclick="game.toggleSetting('vibration')"></div>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Подсказки стратегии</span>
+                <div class="setting-toggle" id="strategyToggle" onclick="game.toggleSetting('strategy')"></div>
+            </div>
+            <button class="settings-close" onclick="game.toggleSettings()">Закрыть</button>
+        </div>
     </div>
 
     <!-- Подсказка -->
     <div class="tooltip" id="tooltip"></div>
 
     <script>
-        // Класс игры Blackjack
+        // Класс игры Blackjack с расширенной функциональностью
         class BlackjackGame {
             constructor() {
                 this.deck = [];
@@ -580,7 +1208,14 @@
                     played: 0,
                     won: 0,
                     lost: 0,
-                    draw: 0
+                    draw: 0,
+                    blackjack: 0
+                };
+                this.settings = {
+                    sound: true,
+                    animation: true,
+                    vibration: false,
+                    strategy: false
                 };
                 
                 // Элементы DOM
@@ -594,16 +1229,21 @@
                     startBtn: document.getElementById('startBtn'),
                     hitBtn: document.getElementById('hitBtn'),
                     standBtn: document.getElementById('standBtn'),
+                    doubleBtn: document.getElementById('doubleBtn'),
                     autoBtn: document.getElementById('autoBtn'),
                     hintBtn: document.getElementById('hintBtn'),
                     chicken: document.getElementById('chicken'),
-                    history: document.getElementById('history'),
+                    historyPanel: document.getElementById('historyPanel'),
                     historyList: document.getElementById('historyList'),
                     tooltip: document.getElementById('tooltip'),
+                    settingsModal: document.getElementById('settingsModal'),
                     gamesPlayed: document.getElementById('gamesPlayed'),
                     gamesWon: document.getElementById('gamesWon'),
                     winRate: document.getElementById('winRate')
                 };
+                
+                // Аудио контекст для звуков
+                this.audioContext = null;
                 
                 this.init();
             }
@@ -611,24 +1251,96 @@
             // Инициализация игры
             init() {
                 this.loadGameData();
+                this.createParticles();
                 this.updateUI();
                 this.updateStats();
                 this.setupEventListeners();
+                this.initAudio();
                 
+                // Приветствие
                 setTimeout(() => {
-                    this.showTooltip('Добро пожаловать в 21!');
+                    this.showTooltip('Добро пожаловать в Premium Blackjack!');
                 }, 500);
+            }
+            
+            // Инициализация аудио
+            initAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Web Audio API не поддерживается');
+                }
+            }
+            
+            // Воспроизведение звука
+            playSound(type) {
+                if (!this.settings.sound || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                switch (type) {
+                    case 'deal':
+                        oscillator.frequency.value = 800;
+                        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                        break;
+                    case 'win':
+                        oscillator.frequency.value = 1200;
+                        gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(2400, this.audioContext.currentTime + 0.3);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                        break;
+                    case 'lose':
+                        oscillator.frequency.value = 200;
+                        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.3);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                        break;
+                    case 'click':
+                        oscillator.frequency.value = 1000;
+                        gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                        break;
+                }
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            }
+            
+            // Вибрация
+            vibrate(pattern) {
+                if (!this.settings.vibration || !navigator.vibrate) return;
+                navigator.vibrate(pattern);
+            }
+            
+            // Создание частиц фона
+            createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 20 + 's';
+                    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                    particlesContainer.appendChild(particle);
+                }
             }
             
             // Загрузка данных
             loadGameData() {
-                const savedData = localStorage.getItem('blackjackCompactData');
+                const savedData = localStorage.getItem('blackjackPremiumData');
                 if (savedData) {
                     const data = JSON.parse(savedData);
                     this.balance = data.balance || 50000;
                     this.gameHistory = data.gameHistory || [];
                     this.gameNumber = data.gameNumber || 0;
-                    this.stats = data.stats || { played: 0, won: 0, lost: 0, draw: 0 };
+                    this.stats = data.stats || { played: 0, won: 0, lost: 0, draw: 0, blackjack: 0 };
+                    this.settings = { ...this.settings, ...data.settings };
+                    this.updateSettingsUI();
                     this.updateHistory();
                 }
             }
@@ -639,9 +1351,10 @@
                     balance: this.balance,
                     gameHistory: this.gameHistory,
                     gameNumber: this.gameNumber,
-                    stats: this.stats
+                    stats: this.stats,
+                    settings: this.settings
                 };
-                localStorage.setItem('blackjackCompactData', JSON.stringify(data));
+                localStorage.setItem('blackjackPremiumData', JSON.stringify(data));
             }
             
             // Настройка событий
@@ -659,6 +1372,14 @@
                         e.target.value = 100;
                     }
                     this.currentBet = parseInt(e.target.value);
+                    this.playSound('click');
+                });
+                
+                // Предотвращение закрытия модального окна при клике на контент
+                this.elements.settingsModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.settingsModal) {
+                        this.toggleSettings();
+                    }
                 });
             }
             
@@ -674,7 +1395,7 @@
                     }
                 }
                 
-                // Перемешивание
+                // Перемешивание колоды
                 for (let i = this.deck.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
@@ -698,6 +1419,7 @@
                     if (card.value === 'A') aces++;
                 }
                 
+                // Обработка тузов
                 while (score > 21 && aces > 0) {
                     score -= 10;
                     aces--;
@@ -706,10 +1428,15 @@
                 return score;
             }
             
+            // Проверка на Blackjack
+            isBlackjack(hand) {
+                return hand.length === 2 && this.calculateScore(hand) === 21;
+            }
+            
             // Отрисовка карты
             renderCard(card, hidden = false) {
                 const cardDiv = document.createElement('div');
-                cardDiv.className = 'card';
+                cardDiv.className = 'playing-card';
                 
                 if (hidden) {
                     cardDiv.classList.add('hidden');
@@ -720,7 +1447,7 @@
                     
                     cardDiv.innerHTML = `
                         <div>${card.value}</div>
-                        <div class="card-suit">${card.suit}</div>
+                        <div class="playing-card-suit">${card.suit}</div>
                     `;
                 }
                 
@@ -733,10 +1460,13 @@
                 this.elements.playerScore.textContent = this.calculateScore(this.playerHand);
                 this.elements.dealerScore.textContent = this.gameActive ? '?' : this.calculateScore(this.dealerHand);
                 
+                // Обновление кнопок
                 this.elements.startBtn.disabled = this.gameActive || this.balance < 100;
                 this.elements.hitBtn.disabled = !this.gameActive;
                 this.elements.standBtn.disabled = !this.gameActive;
+                this.elements.doubleBtn.disabled = !this.gameActive || this.playerHand.length !== 2 || this.balance < this.currentBet * 2;
                 
+                // Обновление максимальной ставки
                 this.elements.bet.max = this.balance;
             }
             
@@ -746,6 +1476,7 @@
                 if (newValue >= 100 && newValue <= this.balance) {
                     this.currentBet = newValue;
                     this.elements.bet.value = newValue;
+                    this.playSound('click');
                 }
             }
             
@@ -753,6 +1484,8 @@
             startGame() {
                 if (this.balance < 100) {
                     this.showTooltip('Недостаточно средств');
+                    this.showSpeech('Ку-ку... Деньги кончились!');
+                    this.playSound('lose');
                     return;
                 }
                 
@@ -769,35 +1502,48 @@
                 this.gameNumber++;
                 this.stats.played++;
                 
+                // Очистка рук
                 this.elements.playerHand.innerHTML = '';
                 this.elements.dealerHand.innerHTML = '';
                 
-                // Раздача
+                // Раздача карт
                 setTimeout(() => {
                     this.playerHand.push(this.deck.pop());
                     this.elements.playerHand.appendChild(this.renderCard(this.playerHand[0]));
                     this.updateUI();
+                    this.playSound('deal');
                 }, 100);
                 
                 setTimeout(() => {
                     this.dealerHand.push(this.deck.pop());
                     this.elements.dealerHand.appendChild(this.renderCard(this.dealerHand[0], true));
+                    this.playSound('deal');
                 }, 200);
                 
                 setTimeout(() => {
                     this.playerHand.push(this.deck.pop());
                     this.elements.playerHand.appendChild(this.renderCard(this.playerHand[1]));
                     this.updateUI();
+                    this.playSound('deal');
+                    
+                    // Проверка на Blackjack
+                    if (this.isBlackjack(this.playerHand)) {
+                        this.stats.blackjack++;
+                        if (this.hintsEnabled) {
+                            this.showTooltip('Blackjack! Отлично!');
+                        }
+                        setTimeout(() => this.stand(), 500);
+                    } else if (this.settings.strategy) {
+                        this.showStrategyHint();
+                    }
                 }, 300);
                 
                 setTimeout(() => {
                     this.dealerHand.push(this.deck.pop());
                     this.elements.dealerHand.appendChild(this.renderCard(this.dealerHand[1]));
+                    this.playSound('deal');
                     
-                    if (this.calculateScore(this.playerHand) === 21) {
-                        setTimeout(() => this.stand(), 300);
-                    }
-                    
+                    // Автоигра
                     if (this.autoPlay) {
                         setTimeout(() => this.autoPlayTurn(), 600);
                     }
@@ -812,6 +1558,8 @@
                 this.playerHand.push(card);
                 this.elements.playerHand.appendChild(this.renderCard(card));
                 this.updateUI();
+                this.playSound('deal');
+                this.vibrate(50);
                 
                 const score = this.calculateScore(this.playerHand);
                 
@@ -819,7 +1567,27 @@
                     setTimeout(() => this.endGame('lose'), 200);
                 } else if (score === 21) {
                     setTimeout(() => this.stand(), 200);
+                } else if (this.settings.strategy) {
+                    setTimeout(() => this.showStrategyHint(), 300);
                 }
+            }
+            
+            // Удвоение ставки
+            double() {
+                if (!this.gameActive || this.playerHand.length !== 2 || this.balance < this.currentBet * 2) return;
+                
+                this.currentBet *= 2;
+                this.balance -= this.currentBet / 2;
+                this.updateUI();
+                
+                // Взять одну карту
+                const card = this.deck.pop();
+                this.playerHand.push(card);
+                this.elements.playerHand.appendChild(this.renderCard(card));
+                this.playSound('deal');
+                this.vibrate([50, 50, 50]);
+                
+                setTimeout(() => this.stand(), 500);
             }
             
             // Хватит
@@ -828,12 +1596,13 @@
                 
                 this.gameActive = false;
                 
+                // Открыть скрытую карту дилера
                 const hiddenCard = this.elements.dealerHand.querySelector('.hidden');
                 if (hiddenCard) {
                     hiddenCard.classList.remove('hidden');
                     hiddenCard.innerHTML = `
                         <div>${this.dealerHand[0].value}</div>
-                        <div class="card-suit">${this.dealerHand[0].suit}</div>
+                        <div class="playing-card-suit">${this.dealerHand[0].suit}</div>
                     `;
                     const isRed = this.dealerHand[0].suit === '♥' || this.dealerHand[0].suit === '♦';
                     if (isRed) hiddenCard.classList.add('red');
@@ -848,20 +1617,30 @@
                 let dealerScore = this.calculateScore(this.dealerHand);
                 
                 while (dealerScore < 17) {
-                    await new Promise(resolve => setTimeout(resolve, 600));
+                    await new Promise(resolve => setTimeout(resolve, 800));
                     
                     const card = this.deck.pop();
                     this.dealerHand.push(card);
                     this.elements.dealerHand.appendChild(this.renderCard(card));
+                    this.playSound('deal');
                     
                     dealerScore = this.calculateScore(this.dealerHand);
                     this.updateUI();
                 }
                 
+                // Определение победителя
                 const playerScore = this.calculateScore(this.playerHand);
+                const playerBlackjack = this.isBlackjack(this.playerHand);
+                const dealerBlackjack = this.isBlackjack(this.dealerHand);
                 
-                if (dealerScore > 21) {
+                if (playerScore > 21) {
+                    this.endGame('lose');
+                } else if (dealerScore > 21) {
                     this.endGame('win');
+                } else if (playerBlackjack && !dealerBlackjack) {
+                    this.endGame('blackjack');
+                } else if (dealerBlackjack && !playerBlackjack) {
+                    this.endGame('lose');
                 } else if (playerScore > dealerScore) {
                     this.endGame('win');
                 } else if (playerScore < dealerScore) {
@@ -875,39 +1654,75 @@
             endGame(result) {
                 this.gameActive = false;
                 
+                const playerScore = this.calculateScore(this.playerHand);
+                const dealerScore = this.calculateScore(this.dealerHand);
+                
                 let balanceChange = 0;
+                let multiplier = 1;
+                let message = '';
+                let chickenPhrase = '';
                 
                 switch (result) {
+                    case 'blackjack':
+                        multiplier = 2.5;
+                        balanceChange = Math.floor(this.currentBet * multiplier);
+                        this.stats.won++;
+                        message = 'BLACKJACK!';
+                        chickenPhrase = 'Ку-ка-ре-ку! Джекпот!';
+                        this.showSpeech(chickenPhrase);
+                        this.animateChicken('happy');
+                        this.showVictoryEffect();
+                        this.createConfetti();
+                        this.playSound('win');
+                        this.vibrate([100, 50, 100]);
+                        break;
                     case 'win':
                         balanceChange = this.currentBet;
                         this.stats.won++;
-                        this.showSpeech('Ку-ка-ре-ку!');
+                        message = 'Победа!';
+                        chickenPhrase = 'Ку-ка-ре-ку!';
+                        this.showSpeech(chickenPhrase);
                         this.animateChicken('happy');
-                        this.showWinEffect();
+                        this.showVictoryEffect();
+                        this.createConfetti();
+                        this.playSound('win');
+                        this.vibrate([100, 50, 100]);
                         break;
                     case 'lose':
                         balanceChange = -this.currentBet;
                         this.stats.lost++;
-                        this.showSpeech('Ку-ку...');
+                        message = 'Проигрыш';
+                        chickenPhrase = 'Ку-ку... Не в этот раз';
+                        this.showSpeech(chickenPhrase);
                         this.animateChicken('sad');
+                        this.showDefeatEffect();
+                        this.playSound('lose');
+                        this.vibrate(200);
                         break;
                     case 'draw':
                         this.stats.draw++;
-                        this.showSpeech('Ничья!');
+                        message = 'Ничья';
+                        chickenPhrase = 'Ничья! Ку-ку!';
+                        this.showSpeech(chickenPhrase);
+                        this.playSound('click');
                         break;
                 }
                 
                 this.balance += balanceChange;
                 
+                // Добавление в историю
                 this.gameHistory.unshift({
                     number: this.gameNumber,
                     result: result,
                     bet: this.currentBet,
-                    balance: this.balance
+                    balance: this.balance,
+                    playerScore: playerScore,
+                    dealerScore: dealerScore
                 });
                 
-                if (this.gameHistory.length > 10) {
-                    this.gameHistory = this.gameHistory.slice(0, 10);
+                // Ограничение истории
+                if (this.gameHistory.length > 20) {
+                    this.gameHistory = this.gameHistory.slice(0, 20);
                 }
                 
                 this.updateUI();
@@ -915,12 +1730,43 @@
                 this.updateHistory();
                 this.saveGameData();
                 
+                // Показать результат
+                if (this.hintsEnabled) {
+                    this.showTooltip(`${message} ${balanceChange > 0 ? '+' : ''}${balanceChange.toLocaleString()} MDL`);
+                }
+                
+                // Автоигра
                 if (this.autoPlay && this.balance >= 100) {
-                    setTimeout(() => this.startGame(), 1200);
+                    setTimeout(() => this.startGame(), 1500);
                 } else if (this.autoPlay && this.balance < 100) {
                     this.toggleAutoPlay();
-                    this.showTooltip('Автоигра остановлена');
+                    this.showTooltip('Автоигра остановлена - недостаточно средств!');
                 }
+            }
+            
+            // Показать подсказку стратегии
+            showStrategyHint() {
+                const playerScore = this.calculateScore(this.playerHand);
+                const dealerUpCard = this.dealerHand[1];
+                const dealerValue = this.getCardValue(dealerUpCard);
+                
+                let hint = '';
+                
+                if (playerScore <= 11) {
+                    hint = 'Берите карту - риск минимален';
+                } else if (playerScore >= 17) {
+                    hint = 'Остановитесь - риск перебора';
+                } else if (playerScore >= 12 && playerScore <= 16) {
+                    if (dealerValue >= 2 && dealerValue <= 6) {
+                        hint = 'Остановитесь - дилер может перебрать';
+                    } else {
+                        hint = 'Берите карту - у дилера сильная карта';
+                    }
+                } else {
+                    hint = 'Следуйте интуиции!';
+                }
+                
+                this.showTooltip(hint);
             }
             
             // Показать подсказку
@@ -930,44 +1776,82 @@
                 
                 setTimeout(() => {
                     this.elements.tooltip.classList.remove('show');
-                }, 2000);
+                }, 3000);
             }
             
             // Переключение подсказок
             toggleHints() {
                 this.hintsEnabled = !this.hintsEnabled;
                 this.elements.hintBtn.classList.toggle('active', this.hintsEnabled);
-                this.showTooltip(this.hintsEnabled ? 'Подсказки вкл' : 'Подсказки выкл');
+                this.showTooltip(this.hintsEnabled ? 'Подсказки включены' : 'Подсказки выключены');
+                this.playSound('click');
             }
             
             // Показать речь
             showSpeech(text) {
                 const speech = document.createElement('div');
-                speech.className = 'speech';
+                speech.className = 'speech-bubble';
                 speech.textContent = text;
                 this.elements.chicken.appendChild(speech);
                 
                 setTimeout(() => {
                     speech.remove();
-                }, 1500);
+                }, 2000);
             }
             
             // Анимация курицы
             animateChicken(type) {
+                if (!this.settings.animation) return;
+                
                 this.elements.chicken.className = `chicken ${type}`;
                 setTimeout(() => {
                     this.elements.chicken.className = 'chicken';
-                }, 500);
+                }, 600);
             }
             
             // Эффект победы
-            showWinEffect() {
+            showVictoryEffect() {
+                if (!this.settings.animation) return;
+                
                 const effect = document.createElement('div');
-                effect.className = 'win-effect';
+                effect.className = 'victory-effect';
                 effect.textContent = 'ПОБЕДА!';
                 document.body.appendChild(effect);
                 
-                setTimeout(() => effect.remove(), 1000);
+                setTimeout(() => effect.remove(), 2000);
+            }
+            
+            // Эффект поражения
+            showDefeatEffect() {
+                if (!this.settings.animation) return;
+                
+                const effect = document.createElement('div');
+                effect.className = 'defeat-effect';
+                document.body.appendChild(effect);
+                
+                setTimeout(() => effect.remove(), 800);
+            }
+            
+            // Создание конфетти
+            createConfetti() {
+                if (!this.settings.animation) return;
+                
+                const colors = ['#00d4ff', '#ff006e', '#00ff88', '#ffaa00', '#aa00ff'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                        confetti.style.width = (5 + Math.random() * 10) + 'px';
+                        confetti.style.height = confetti.style.width;
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 30);
+                }
             }
             
             // Обновление статистики
@@ -983,23 +1867,42 @@
             
             // Переключение истории
             toggleHistory() {
-                this.elements.history.classList.toggle('show');
+                this.elements.historyPanel.classList.toggle('active');
+                this.playSound('click');
             }
             
             // Обновление истории
             updateHistory() {
                 this.elements.historyList.innerHTML = '';
                 
-                this.gameHistory.forEach((game) => {
+                this.gameHistory.slice(0, 10).forEach((game) => {
                     const item = document.createElement('div');
                     item.className = 'history-item';
                     
-                    const resultText = game.result === 'win' ? 'Победа' : 
-                                      game.result === 'lose' ? 'Проигрыш' : 'Ничья';
+                    let resultClass = game.result;
+                    let resultText = '';
+                    
+                    switch (game.result) {
+                        case 'win':
+                            resultText = 'Победа';
+                            break;
+                        case 'lose':
+                            resultText = 'Проигрыш';
+                            break;
+                        case 'draw':
+                            resultText = 'Ничья';
+                            break;
+                        case 'blackjack':
+                            resultText = 'Blackjack';
+                            break;
+                    }
                     
                     item.innerHTML = `
-                        <div class="history-result ${game.result}">${resultText}</div>
-                        <div>${game.bet.toLocaleString()} MDL</div>
+                        <div class="history-result ${resultClass}">${resultText}</div>
+                        <div class="history-details">
+                            <div class="history-bet">${game.bet.toLocaleString()} MDL</div>
+                            <div class="history-balance">${game.balance.toLocaleString()} MDL</div>
+                        </div>
                     `;
                     
                     this.elements.historyList.appendChild(item);
@@ -1010,6 +1913,7 @@
             toggleAutoPlay() {
                 this.autoPlay = !this.autoPlay;
                 this.elements.autoBtn.classList.toggle('active', this.autoPlay);
+                this.playSound('click');
                 
                 if (this.autoPlay && !this.gameActive && this.balance >= 100) {
                     const autoBet = Math.min(500, this.balance);
@@ -1018,7 +1922,7 @@
                     this.startGame();
                     this.showTooltip('Автоигра начата');
                 } else {
-                    this.showTooltip(this.autoPlay ? 'Автоигра вкл' : 'Автоигра выкл');
+                    this.showTooltip(this.autoPlay ? 'Автоигра включена' : 'Автоигра выключена');
                 }
             }
             
@@ -1028,16 +1932,41 @@
                 
                 const score = this.calculateScore(this.playerHand);
                 
+                // Простая стратегия для автоигры
                 if (score < 17) {
                     this.hit();
-                    setTimeout(() => this.autoPlayTurn(), 600);
+                    setTimeout(() => this.autoPlayTurn(), 800);
+                } else if (score === 11 && this.playerHand.length === 2 && this.balance >= this.currentBet * 2) {
+                    this.double();
                 } else {
                     this.stand();
                 }
             }
+            
+            // Переключение настроек
+            toggleSettings() {
+                this.elements.settingsModal.classList.toggle('active');
+                this.playSound('click');
+            }
+            
+            // Переключение настройки
+            toggleSetting(setting) {
+                this.settings[setting] = !this.settings[setting];
+                this.updateSettingsUI();
+                this.playSound('click');
+                this.saveGameData();
+            }
+            
+            // Обновление UI настроек
+            updateSettingsUI() {
+                document.getElementById('soundToggle').classList.toggle('active', this.settings.sound);
+                document.getElementById('animationToggle').classList.toggle('active', this.settings.animation);
+                document.getElementById('vibrationToggle').classList.toggle('active', this.settings.vibration);
+                document.getElementById('strategyToggle').classList.toggle('active', this.settings.strategy);
+            }
         }
         
-        // Запуск игры
+        // Запуск игры при загрузке страницы
         let game;
         document.addEventListener('DOMContentLoaded', () => {
             game = new BlackjackGame();
